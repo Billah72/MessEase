@@ -61,7 +61,7 @@ export const MemberMealsPage: React.FC<MemberMealsPageProps> = ({ onNavigateToRe
   const totalGuestMeals = days.reduce((sum, d) => sum + d.record.guestMeals, 0);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
+    <div className="page-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
       
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
@@ -87,7 +87,7 @@ export const MemberMealsPage: React.FC<MemberMealsPageProps> = ({ onNavigateToRe
       </div>
 
       {/* Summary KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div className="grid-responsive-3" style={{ gap: '16px' }}>
         
         <div className="card" style={{ padding: '18px' }}>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
@@ -140,7 +140,7 @@ export const MemberMealsPage: React.FC<MemberMealsPageProps> = ({ onNavigateToRe
           </span>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
+        <div className="table-responsive-wrapper">
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid var(--border-light)', textAlign: 'left', color: 'var(--text-muted)' }}>

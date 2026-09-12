@@ -67,7 +67,7 @@ export const MemberProfilePage: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px', maxWidth: '900px' }}>
+    <div className="page-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px', maxWidth: '900px' }}>
       
       {/* Header */}
       <div>
@@ -110,7 +110,7 @@ export const MemberProfilePage: React.FC = () => {
       </div>
 
       {/* Grid: Contact Info + Password Change */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+      <div className="grid-responsive-2" style={{ gap: '20px' }}>
         
         {/* Contact Info Form */}
         <div className="card" style={{ padding: '24px' }}>

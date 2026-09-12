@@ -85,7 +85,7 @@ export const ManagerFinancePage: React.FC = () => {
   };
 
   return (
-    <div className="page-content">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Page Header */}
       <div className="page-header">
         <div>
@@ -115,7 +115,7 @@ export const ManagerFinancePage: React.FC = () => {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid-3" style={{ marginBottom: '24px' }}>
+      <div className="grid-responsive-3">
         <StatCard
           label="Current Treasury Balance"
           value={formatBDT(overallStats.currentMessBalance)}
@@ -144,7 +144,7 @@ export const ManagerFinancePage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-light)', paddingBottom: '8px', flexWrap: 'wrap' }}>
         <button
           onClick={() => setActiveTab('DEPOSITS')}
           className={`btn btn-sm ${activeTab === 'DEPOSITS' ? 'btn-primary' : 'btn-outline'}`}
@@ -160,7 +160,7 @@ export const ManagerFinancePage: React.FC = () => {
       </div>
 
       {/* Search */}
-      <div className="card" style={{ marginBottom: '16px', padding: '12px 16px' }}>
+      <div className="card" style={{ padding: '12px 16px' }}>
         <div style={{ position: 'relative' }}>
           <Search size={16} color="var(--slate-400)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
           <input 
@@ -175,8 +175,8 @@ export const ManagerFinancePage: React.FC = () => {
       </div>
 
       {activeTab === 'DEPOSITS' ? (
-        <div className="table-responsive">
-          <table className="custom-table">
+        <div className="table-responsive-wrapper">
+          <table>
             <thead>
               <tr>
                 <th>Date</th>
@@ -217,7 +217,7 @@ export const ManagerFinancePage: React.FC = () => {
                           if (confirm(`Delete payment of ৳${tx.amount} from ${tx.memberName}?`)) deleteTransaction(tx.id);
                         }}
                         className="btn btn-outline btn-sm"
-                        style={{ color: 'var(--danger-500)', padding: '4px 8px' }}
+                        style={{ color: 'var(--danger-500)', padding: '4px 8px', minHeight: '32px' }}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -228,8 +228,8 @@ export const ManagerFinancePage: React.FC = () => {
           </table>
         </div>
       ) : (
-        <div className="table-responsive">
-          <table className="custom-table">
+        <div className="table-responsive-wrapper">
+          <table>
             <thead>
               <tr>
                 <th>Date</th>
@@ -258,7 +258,7 @@ export const ManagerFinancePage: React.FC = () => {
                           if (confirm(`Delete expense of ৳${exp.amount}?`)) deleteExpense(exp.id);
                         }}
                         className="btn btn-outline btn-sm"
-                        style={{ color: 'var(--danger-500)', padding: '4px 8px' }}
+                        style={{ color: 'var(--danger-500)', padding: '4px 8px', minHeight: '32px' }}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -271,174 +271,178 @@ export const ManagerFinancePage: React.FC = () => {
       )}
 
       {/* Modal: Record Member Deposit */}
-      <Modal
-        isOpen={showDepositModal}
-        onClose={() => setShowDepositModal(false)}
-        title="Record Member Payment Deposit"
-        subtitle="Credit funds to member ledger and mess treasury"
-      >
-        <form onSubmit={handleDepositSubmit}>
-          <div className="form-group">
-            <label className="form-label">Select Member</label>
-            <select
-              value={depMemberId}
-              onChange={(e) => setDepMemberId(e.target.value)}
-              className="form-control"
-            >
-              {members.map(m => (
-                <option key={m.id} value={m.id}>{m.name} ({m.roomNo})</option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      {showDepositModal && (
+        <Modal
+          isOpen={showDepositModal}
+          onClose={() => setShowDepositModal(false)}
+          title="Record Member Payment Deposit"
+          subtitle="Credit funds to member ledger and mess treasury"
+        >
+          <form onSubmit={handleDepositSubmit}>
             <div className="form-group">
-              <label className="form-label">Deposit Amount (৳)</label>
-              <input 
-                type="number"
-                required
-                min="100"
-                step="50"
-                value={depAmount}
-                onChange={(e) => setDepAmount(Number(e.target.value))}
-                className="form-control"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Deposit Date</label>
-              <input 
-                type="date"
-                required
-                value={depDate}
-                onChange={(e) => setDepDate(e.target.value)}
-                className="form-control"
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            <div className="form-group">
-              <label className="form-label">Payment Method</label>
+              <label className="form-label">Select Member</label>
               <select
-                value={depMethod}
-                onChange={(e) => setDepMethod(e.target.value as PaymentMethod)}
+                value={depMemberId}
+                onChange={(e) => setDepMemberId(e.target.value)}
                 className="form-control"
               >
-                <option value="bKash">bKash</option>
-                <option value="Nagad">Nagad</option>
-                <option value="Rocket">Rocket</option>
-                <option value="Cash">Cash in Hand</option>
-                <option value="Bank">Bank Transfer</option>
+                {members.map(m => (
+                  <option key={m.id} value={m.id}>{m.name} ({m.roomNo})</option>
+                ))}
               </select>
             </div>
 
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <div className="form-group">
+                <label className="form-label">Deposit Amount (৳)</label>
+                <input 
+                  type="number"
+                  required
+                  min="100"
+                  step="50"
+                  value={depAmount}
+                  onChange={(e) => setDepAmount(Number(e.target.value))}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Deposit Date</label>
+                <input 
+                  type="date"
+                  required
+                  value={depDate}
+                  onChange={(e) => setDepDate(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <div className="form-group">
+                <label className="form-label">Payment Method</label>
+                <select
+                  value={depMethod}
+                  onChange={(e) => setDepMethod(e.target.value as PaymentMethod)}
+                  className="form-control"
+                >
+                  <option value="bKash">bKash</option>
+                  <option value="Nagad">Nagad</option>
+                  <option value="Rocket">Rocket</option>
+                  <option value="Cash">Cash in Hand</option>
+                  <option value="Bank">Bank Transfer</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Trx ID / Slip (Optional)</label>
+                <input 
+                  type="text"
+                  placeholder="BK991209"
+                  value={depTrxId}
+                  onChange={(e) => setDepTrxId(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </div>
+
             <div className="form-group">
-              <label className="form-label">Trx ID / Slip (Optional)</label>
+              <label className="form-label">Description Note</label>
               <input 
                 type="text"
-                placeholder="BK991209"
-                value={depTrxId}
-                onChange={(e) => setDepTrxId(e.target.value)}
+                value={depDesc}
+                onChange={(e) => setDepDesc(e.target.value)}
                 className="form-control"
               />
             </div>
-          </div>
 
-          <div className="form-group">
-            <label className="form-label">Description Note</label>
-            <input 
-              type="text"
-              value={depDesc}
-              onChange={(e) => setDepDesc(e.target.value)}
-              className="form-control"
-            />
-          </div>
-
-          <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
-            <button type="button" onClick={() => setShowDepositModal(false)} className="btn btn-secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              <CheckCircle2 size={16} /> Credit Deposit (৳{depAmount})
-            </button>
-          </div>
-        </form>
-      </Modal>
+            <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
+              <button type="button" onClick={() => setShowDepositModal(false)} className="btn btn-secondary">
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                <CheckCircle2 size={16} /> Credit Deposit (৳{depAmount})
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
 
       {/* Modal: Add Utility Expense */}
-      <Modal
-        isOpen={showExpenseModal}
-        onClose={() => setShowExpenseModal(false)}
-        title="Add Shared Utility Bill"
-        subtitle="Record expenses like Gas, Maid salary, WiFi, or Repairs"
-      >
-        <form onSubmit={handleExpenseSubmit}>
-          <div className="form-group">
-            <label className="form-label">Expense Category</label>
-            <select
-              value={expCategory}
-              onChange={(e) => setExpCategory(e.target.value as ExpenseCategory)}
-              className="form-control"
-            >
-              <option value="GAS_CYLINDER">LPG Gas Cylinder</option>
-              <option value="MAID_SALARY">Cook / Maid Auntie (Khala) Salary</option>
-              <option value="INTERNET">WiFi Internet Broadband</option>
-              <option value="ELECTRICITY">Electricity Bill</option>
-              <option value="WATER">Water / WASA</option>
-              <option value="CLEANING">Cleaning & Waste Disposal</option>
-              <option value="MAINTENANCE">Plumbing & Maintenance</option>
-              <option value="MISC">Miscellaneous</option>
-            </select>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      {showExpenseModal && (
+        <Modal
+          isOpen={showExpenseModal}
+          onClose={() => setShowExpenseModal(false)}
+          title="Add Shared Utility Bill"
+          subtitle="Record expenses like Gas, Maid salary, WiFi, or Repairs"
+        >
+          <form onSubmit={handleExpenseSubmit}>
             <div className="form-group">
-              <label className="form-label">Amount (৳)</label>
+              <label className="form-label">Expense Category</label>
+              <select
+                value={expCategory}
+                onChange={(e) => setExpCategory(e.target.value as ExpenseCategory)}
+                className="form-control"
+              >
+                <option value="GAS_CYLINDER">LPG Gas Cylinder</option>
+                <option value="MAID_SALARY">Cook / Maid Auntie (Khala) Salary</option>
+                <option value="INTERNET">WiFi Internet Broadband</option>
+                <option value="ELECTRICITY">Electricity Bill</option>
+                <option value="WATER">Water / WASA</option>
+                <option value="CLEANING">Cleaning & Waste Disposal</option>
+                <option value="MAINTENANCE">Plumbing & Maintenance</option>
+                <option value="MISC">Miscellaneous</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <div className="form-group">
+                <label className="form-label">Amount (৳)</label>
+                <input 
+                  type="number"
+                  required
+                  min="10"
+                  value={expAmount}
+                  onChange={(e) => setExpAmount(Number(e.target.value))}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Date</label>
+                <input 
+                  type="date"
+                  required
+                  value={expDate}
+                  onChange={(e) => setExpDate(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Description / Bill Details</label>
               <input 
-                type="number"
+                type="text"
                 required
-                min="10"
-                value={expAmount}
-                onChange={(e) => setExpAmount(Number(e.target.value))}
+                placeholder="e.g. Dot Internet 35Mbps bill"
+                value={expDesc}
+                onChange={(e) => setExpDesc(e.target.value)}
                 className="form-control"
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Date</label>
-              <input 
-                type="date"
-                required
-                value={expDate}
-                onChange={(e) => setExpDate(e.target.value)}
-                className="form-control"
-              />
+            <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
+              <button type="button" onClick={() => setShowExpenseModal(false)} className="btn btn-secondary">
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                <CheckCircle2 size={16} /> Record Expense (৳{expAmount})
+              </button>
             </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Description / Bill Details</label>
-            <input 
-              type="text"
-              required
-              placeholder="e.g. Dot Internet 35Mbps bill"
-              value={expDesc}
-              onChange={(e) => setExpDesc(e.target.value)}
-              className="form-control"
-            />
-          </div>
-
-          <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
-            <button type="button" onClick={() => setShowExpenseModal(false)} className="btn btn-secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              <CheckCircle2 size={16} /> Record Expense (৳{expAmount})
-            </button>
-          </div>
-        </form>
-      </Modal>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 };

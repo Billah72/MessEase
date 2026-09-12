@@ -139,9 +139,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateAuth }) => {
         </p>
 
         {/* 2 Main Portal Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        <div className="grid-responsive-2" style={{
           gap: '24px',
           textAlign: 'left'
         }}>

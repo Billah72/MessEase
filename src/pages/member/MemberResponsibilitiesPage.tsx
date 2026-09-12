@@ -21,7 +21,7 @@ export const MemberResponsibilitiesPage: React.FC = () => {
   const todayStr = '2026-09-12';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
+    <div className="page-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
       
       {/* Header */}
       <div>
@@ -34,7 +34,7 @@ export const MemberResponsibilitiesPage: React.FC = () => {
       </div>
 
       {/* Duty Guidelines Banner */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+      <div className="grid-responsive-3" style={{ gap: '16px' }}>
         
         <div className="card" style={{ padding: '20px', borderLeft: '4px solid #2563eb' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
@@ -134,7 +134,7 @@ export const MemberResponsibilitiesPage: React.FC = () => {
                   )}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                <div className="grid-responsive-3" style={{ gap: '12px' }}>
                   
                   {/* Bazar Duty */}
                   <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'var(--bg-card)', border: '1px solid var(--border-light)' }}>

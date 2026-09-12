@@ -88,7 +88,7 @@ export const ManagerMembersPage: React.FC = () => {
   };
 
   return (
-    <div className="page-content">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Page Header */}
       <div className="page-header">
         <div>
@@ -116,7 +116,6 @@ export const ManagerMembersPage: React.FC = () => {
           border: '1.5px solid var(--primary-300)',
           borderRadius: 'var(--radius-lg)',
           padding: '18px 22px',
-          marginBottom: '20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -151,7 +150,7 @@ export const ManagerMembersPage: React.FC = () => {
       )}
 
       {/* Search Bar */}
-      <div className="card" style={{ marginBottom: '20px', padding: '14px 18px' }}>
+      <div className="card" style={{ padding: '14px 18px' }}>
         <div style={{ position: 'relative' }}>
           <Search size={16} color="var(--slate-400)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
           <input 
@@ -165,9 +164,9 @@ export const ManagerMembersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Members Directory Table */}
-      <div className="table-responsive" style={{ marginBottom: '24px' }}>
-        <table className="custom-table">
+      {/* Members Directory Table in Responsive Wrapper */}
+      <div className="table-responsive-wrapper">
+        <table>
           <thead>
             <tr>
               <th>Member Details</th>
@@ -191,7 +190,7 @@ export const ManagerMembersPage: React.FC = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <img 
                         src={member.avatarUrl} 
-                        alt={member.name}
+                        alt={member.name} 
                         style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }}
                       />
                       <div>
@@ -239,7 +238,7 @@ export const ManagerMembersPage: React.FC = () => {
                       <button
                         onClick={() => setEditingMember(member)}
                         className="btn btn-secondary btn-icon-only"
-                        style={{ width: '30px', height: '30px', padding: 0 }}
+                        style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                         title="Edit Member Profile & Password"
                       >
                         <Edit size={13} />
@@ -251,7 +250,7 @@ export const ManagerMembersPage: React.FC = () => {
                           }
                         }}
                         className={`btn ${member.status === 'ACTIVE' ? 'btn-danger' : 'btn-primary'} btn-sm`}
-                        style={{ padding: '3px 8px', fontSize: '0.72rem' }}
+                        style={{ padding: '3px 8px', fontSize: '0.72rem', minHeight: '32px' }}
                       >
                         {member.status === 'ACTIVE' ? 'Deactivate' : 'Reactivate'}
                       </button>
@@ -265,100 +264,102 @@ export const ManagerMembersPage: React.FC = () => {
       </div>
 
       {/* Modal: Create Member Account */}
-      <Modal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        title="Create New Member Account"
-        subtitle="Only the Manager can create member accounts and generate login credentials"
-      >
-        <form onSubmit={handleCreateMember}>
-          <div className="form-group">
-            <label className="form-label">Member Full Name</label>
-            <input 
-              type="text"
-              required
-              placeholder="e.g. Mahfuzur Rahman"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="form-control"
-            />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      {showCreateModal && (
+        <Modal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          title="Create New Member Account"
+          subtitle="Only the Manager can create member accounts and generate login credentials"
+        >
+          <form onSubmit={handleCreateMember}>
             <div className="form-group">
-              <label className="form-label">Member Email (Login ID)</label>
-              <input 
-                type="email"
-                required
-                placeholder="mahfuz@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="form-control"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Temporary Password</label>
+              <label className="form-label">Member Full Name</label>
               <input 
                 type="text"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="e.g. Mahfuzur Rahman"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="form-control"
               />
             </div>
-          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <div className="form-group">
+                <label className="form-label">Member Email (Login ID)</label>
+                <input 
+                  type="email"
+                  required
+                  placeholder="mahfuz@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Temporary Password</label>
+                <input 
+                  type="text"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <div className="form-group">
+                <label className="form-label">Phone Number</label>
+                <input 
+                  type="text"
+                  required
+                  placeholder="+880 1711-000000"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Room Allocation</label>
+                <input 
+                  type="text"
+                  placeholder="Room 403"
+                  value={roomNo}
+                  onChange={(e) => setRoomNo(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </div>
+
             <div className="form-group">
-              <label className="form-label">Phone Number</label>
+              <label className="form-label">Initial Opening Deposit (৳ BDT - Optional)</label>
               <input 
-                type="text"
-                required
-                placeholder="+880 1711-000000"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                type="number"
+                min="0"
+                step="100"
+                value={initialDeposit}
+                onChange={(e) => setInitialDeposit(Number(e.target.value))}
                 className="form-control"
               />
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                Automatically credits advance money to the new member's ledger.
+              </span>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Room Allocation</label>
-              <input 
-                type="text"
-                placeholder="Room 403"
-                value={roomNo}
-                onChange={(e) => setRoomNo(e.target.value)}
-                className="form-control"
-              />
+            <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
+              <button type="button" onClick={() => setShowCreateModal(false)} className="btn btn-secondary">
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                <UserPlus size={16} /> Create Account & Generate Credentials
+              </button>
             </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Initial Opening Deposit (৳ BDT - Optional)</label>
-            <input 
-              type="number"
-              min="0"
-              step="100"
-              value={initialDeposit}
-              onChange={(e) => setInitialDeposit(Number(e.target.value))}
-              className="form-control"
-            />
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-              Automatically credits advance money to the new member's ledger.
-            </span>
-          </div>
-
-          <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
-            <button type="button" onClick={() => setShowCreateModal(false)} className="btn btn-secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              <UserPlus size={16} /> Create Account & Generate Credentials
-            </button>
-          </div>
-        </form>
-      </Modal>
+          </form>
+        </Modal>
+      )}
 
       {/* Modal: Edit Member Account */}
       {editingMember && (
@@ -380,7 +381,7 @@ export const ManagerMembersPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
               <div className="form-group">
                 <label className="form-label">Phone Number</label>
                 <input 

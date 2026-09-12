@@ -91,7 +91,7 @@ export const ManagerBazarPage: React.FC = () => {
   );
 
   return (
-    <div className="page-content">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Page Header */}
       <div className="page-header">
         <div>
@@ -113,7 +113,7 @@ export const ManagerBazarPage: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid-3" style={{ marginBottom: '24px' }}>
+      <div className="grid-responsive-3">
         <StatCard
           label="Total Food Shopping"
           value={formatBDT(overallStats.totalBazarCost)}
@@ -140,7 +140,7 @@ export const ManagerBazarPage: React.FC = () => {
       </div>
 
       {/* Search */}
-      <div className="card" style={{ marginBottom: '20px', padding: '14px 18px' }}>
+      <div className="card" style={{ padding: '14px 18px' }}>
         <div style={{ position: 'relative' }}>
           <Search size={16} color="var(--slate-400)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
           <input 
@@ -168,7 +168,8 @@ export const ManagerBazarPage: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '1.2rem'
+                  fontSize: '1.2rem',
+                  flexShrink: 0
                 }}>
                   🛍️
                 </div>
@@ -176,7 +177,7 @@ export const ManagerBazarPage: React.FC = () => {
                   <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: 'var(--slate-900)' }}>
                     {trip.storeName}
                   </h3>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', gap: '12px', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', gap: '12px', marginTop: '2px', flexWrap: 'wrap' }}>
                     <span>📅 {trip.date}</span>
                     <span>👤 Shopper: <strong>{trip.shopperName}</strong></span>
                   </div>
@@ -196,7 +197,7 @@ export const ManagerBazarPage: React.FC = () => {
                     if (confirm(`Delete bazar trip of ৳${trip.totalAmount}?`)) deleteBazarTrip(trip.id);
                   }}
                   className="btn btn-outline btn-sm"
-                  style={{ color: 'var(--danger-500)' }}
+                  style={{ color: 'var(--danger-500)', minHeight: '32px' }}
                 >
                   <Trash2 size={15} />
                 </button>
@@ -204,8 +205,8 @@ export const ManagerBazarPage: React.FC = () => {
             </div>
 
             {/* Items Table */}
-            <div className="table-responsive" style={{ background: 'var(--slate-50)' }}>
-              <table className="custom-table" style={{ fontSize: '0.825rem' }}>
+            <div className="table-responsive-wrapper">
+              <table>
                 <thead>
                   <tr>
                     <th>Item Name</th>
@@ -245,187 +246,189 @@ export const ManagerBazarPage: React.FC = () => {
       </div>
 
       {/* Modal: Add Bazar Trip */}
-      <Modal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        title="Record New Bazar Trip"
-        subtitle="Itemized grocery shopping entry"
-        maxWidth="680px"
-      >
-        <form onSubmit={handleSubmitBazar}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Purchase Date</label>
+      {showAddModal && (
+        <Modal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          title="Record New Bazar Trip"
+          subtitle="Itemized grocery shopping entry"
+          maxWidth="680px"
+        >
+          <form onSubmit={handleSubmitBazar}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '14px' }}>
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Purchase Date</label>
+                <input 
+                  type="date"
+                  required
+                  value={formDate}
+                  onChange={(e) => setFormDate(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group" style={{ margin: 0 }}>
+                <label className="form-label">Shopper (Duty Member)</label>
+                <select
+                  value={formShopperId}
+                  onChange={(e) => setFormShopperId(e.target.value)}
+                  className="form-control"
+                >
+                  {users.map(u => (
+                    <option key={u.id} value={u.id}>{u.name} ({u.roomNo})</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Market / Store Name</label>
               <input 
-                type="date"
+                type="text"
                 required
-                value={formDate}
-                onChange={(e) => setFormDate(e.target.value)}
+                placeholder="e.g. Dhanmondi 15 Krishi Market"
+                value={formStore}
+                onChange={(e) => setFormStore(e.target.value)}
                 className="form-control"
               />
             </div>
 
-            <div className="form-group" style={{ margin: 0 }}>
-              <label className="form-label">Shopper (Duty Member)</label>
-              <select
-                value={formShopperId}
-                onChange={(e) => setFormShopperId(e.target.value)}
-                className="form-control"
-              >
-                {users.map(u => (
-                  <option key={u.id} value={u.id}>{u.name} ({u.roomNo})</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Market / Store Name</label>
-            <input 
-              type="text"
-              required
-              placeholder="e.g. Dhanmondi 15 Krishi Market"
-              value={formStore}
-              onChange={(e) => setFormStore(e.target.value)}
-              className="form-control"
-            />
-          </div>
-
-          {/* Itemized Table */}
-          <div style={{ margin: '16px 0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Purchased Grocery Items</span>
-              <button 
-                type="button"
-                onClick={handleAddItemRow}
-                className="btn btn-secondary btn-sm"
-              >
-                <Plus size={14} /> Add Row
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {formItems.map((item, idx) => (
-                <div 
-                  key={idx} 
-                  style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '8px',
-                    alignItems: 'center',
-                    background: 'var(--slate-50)',
-                    padding: '10px',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-subtle)'
-                  }}
+            {/* Itemized Table */}
+            <div style={{ margin: '16px 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Purchased Grocery Items</span>
+                <button 
+                  type="button"
+                  onClick={handleAddItemRow}
+                  className="btn btn-secondary btn-sm"
                 >
-                  <input 
-                    type="text"
-                    placeholder="Item (e.g. Rice, Beef)"
-                    value={item.name}
-                    onChange={(e) => handleItemChange(idx, 'name', e.target.value)}
-                    className="form-control"
-                    style={{ flex: '2 1 140px', minWidth: '130px', padding: '7px 10px', fontSize: '0.85rem' }}
-                    required
-                  />
+                  <Plus size={14} /> Add Row
+                </button>
+              </div>
 
-                  <select
-                    value={item.category}
-                    onChange={(e) => handleItemChange(idx, 'category', e.target.value)}
-                    className="form-control"
-                    style={{ flex: '1 1 100px', minWidth: '95px', padding: '7px 8px', fontSize: '0.8rem' }}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {formItems.map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '8px',
+                      alignItems: 'center',
+                      background: 'var(--slate-50)',
+                      padding: '10px',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-subtle)'
+                    }}
                   >
-                    <option value="VEGETABLES">Vegetables</option>
-                    <option value="MEAT_FISH">Meat/Fish</option>
-                    <option value="GROCERY_OIL">Grocery/Oil</option>
-                    <option value="SPICES">Spices</option>
-                    <option value="DAIRY_EGG">Egg/Dairy</option>
-                    <option value="MISC">Misc</option>
-                  </select>
-
-                  <div style={{ display: 'flex', gap: '4px', flex: '1 1 110px' }}>
                     <input 
-                      type="number"
-                      step="any"
-                      min="0.1"
-                      placeholder="Qty"
-                      value={item.quantity}
-                      onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
+                      type="text"
+                      placeholder="Item (e.g. Rice, Beef)"
+                      value={item.name}
+                      onChange={(e) => handleItemChange(idx, 'name', e.target.value)}
                       className="form-control"
-                      style={{ padding: '7px 8px', fontSize: '0.85rem', width: '55px' }}
+                      style={{ flex: '2 1 140px', minWidth: '130px', padding: '7px 10px', fontSize: '0.85rem' }}
                       required
                     />
+
                     <select
-                      value={item.unit}
-                      onChange={(e) => handleItemChange(idx, 'unit', e.target.value)}
+                      value={item.category}
+                      onChange={(e) => handleItemChange(idx, 'category', e.target.value)}
                       className="form-control"
-                      style={{ padding: '7px 4px', fontSize: '0.8rem' }}
+                      style={{ flex: '1 1 100px', minWidth: '95px', padding: '7px 8px', fontSize: '0.8rem' }}
                     >
-                      <option value="kg">kg</option>
-                      <option value="liter">ltr</option>
-                      <option value="dozen">dz</option>
-                      <option value="piece">pc</option>
-                      <option value="packet">pkt</option>
-                      <option value="bundle">bdl</option>
+                      <option value="VEGETABLES">Vegetables</option>
+                      <option value="MEAT_FISH">Meat/Fish</option>
+                      <option value="GROCERY_OIL">Grocery/Oil</option>
+                      <option value="SPICES">Spices</option>
+                      <option value="DAIRY_EGG">Egg/Dairy</option>
+                      <option value="MISC">Misc</option>
                     </select>
-                  </div>
 
-                  <input 
-                    type="number"
-                    placeholder="Unit Price ৳"
-                    value={item.unitPrice || ''}
-                    onChange={(e) => handleItemChange(idx, 'unitPrice', e.target.value)}
-                    className="form-control"
-                    style={{ flex: '1 1 90px', minWidth: '85px', padding: '7px 8px', fontSize: '0.85rem' }}
-                    required
-                  />
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px', marginLeft: 'auto', minWidth: '100px' }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--primary-700)' }}>
-                      ৳{item.totalPrice.toLocaleString()}
+                    <div style={{ display: 'flex', gap: '4px', flex: '1 1 110px' }}>
+                      <input 
+                        type="number"
+                        step="any"
+                        min="0.1"
+                        placeholder="Qty"
+                        value={item.quantity}
+                        onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
+                        className="form-control"
+                        style={{ padding: '7px 8px', fontSize: '0.85rem', width: '55px' }}
+                        required
+                      />
+                      <select
+                        value={item.unit}
+                        onChange={(e) => handleItemChange(idx, 'unit', e.target.value)}
+                        className="form-control"
+                        style={{ padding: '7px 4px', fontSize: '0.8rem' }}
+                      >
+                        <option value="kg">kg</option>
+                        <option value="liter">ltr</option>
+                        <option value="dozen">dz</option>
+                        <option value="piece">pc</option>
+                        <option value="packet">pkt</option>
+                        <option value="bundle">bdl</option>
+                      </select>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItemRow(idx)}
-                      disabled={formItems.length === 1}
-                      className="btn btn-secondary btn-icon-only"
-                      style={{ width: '30px', height: '30px', padding: 0 }}
-                    >
-                      <Trash2 size={14} color="var(--danger-500)" />
-                    </button>
+                    <input 
+                      type="number"
+                      placeholder="Unit Price ৳"
+                      value={item.unitPrice || ''}
+                      onChange={(e) => handleItemChange(idx, 'unitPrice', e.target.value)}
+                      className="form-control"
+                      style={{ flex: '1 1 90px', minWidth: '85px', padding: '7px 8px', fontSize: '0.85rem' }}
+                      required
+                    />
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px', marginLeft: 'auto', minWidth: '100px' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--primary-700)' }}>
+                        ৳{item.totalPrice.toLocaleString()}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItemRow(idx)}
+                        disabled={formItems.length === 1}
+                        className="btn btn-secondary btn-icon-only"
+                        style={{ width: '30px', height: '30px', minHeight: '30px', padding: 0 }}
+                      >
+                        <Trash2 size={14} color="var(--danger-500)" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div style={{
-            background: 'var(--primary-50)',
-            border: '1px solid var(--primary-200)',
-            borderRadius: 'var(--radius-md)',
-            padding: '12px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '16px'
-          }}>
-            <span style={{ fontWeight: 700, color: 'var(--primary-900)' }}>Calculated Total Bazar:</span>
-            <span style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--primary-700)' }}>
-              ৳{grandTotal.toLocaleString()}
-            </span>
-          </div>
+            <div style={{
+              background: 'var(--primary-50)',
+              border: '1px solid var(--primary-200)',
+              borderRadius: 'var(--radius-md)',
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '16px'
+            }}>
+              <span style={{ fontWeight: 700, color: 'var(--primary-900)' }}>Calculated Total Bazar:</span>
+              <span style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--primary-700)' }}>
+                ৳{grandTotal.toLocaleString()}
+              </span>
+            </div>
 
-          <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
-            <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              <CheckCircle2 size={16} /> Save Bazar Trip (৳{grandTotal})
-            </button>
-          </div>
-        </form>
-      </Modal>
+            <div className="modal-footer" style={{ padding: '16px 0 0 0', background: 'transparent' }}>
+              <button type="button" onClick={() => setShowAddModal(false)} className="btn btn-secondary">
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                <CheckCircle2 size={16} /> Save Bazar Trip (৳{grandTotal})
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 };

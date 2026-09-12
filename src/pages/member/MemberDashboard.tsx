@@ -68,7 +68,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({ onNavigate }) 
   const activeNotices = announcements.slice(0, 2);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
+    <div className="page-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
       
       {/* Welcome Banner */}
       <div style={{
@@ -129,7 +129,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({ onNavigate }) 
       </div>
 
       {/* Financial & Meal Stat Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+      <div className="grid-responsive-4" style={{ gap: '16px' }}>
         
         {/* Balance Card */}
         <div className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderLeft: `4px solid ${isPositive ? '#10b981' : '#ef4444'}` }}>
@@ -223,7 +223,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({ onNavigate }) 
       </div>
 
       {/* Main Grid: Today's Meals & Duty Status */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+      <div className="grid-responsive-2" style={{ gap: '20px' }}>
         
         {/* Today's Meal Plan Card */}
         <div className="card" style={{ padding: '24px' }}>
@@ -501,7 +501,7 @@ export const MemberDashboard: React.FC<MemberDashboardProps> = ({ onNavigate }) 
             No meal requests submitted yet. Click "Submit New Request" to turn on/off meals or add guests.
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-responsive-wrapper">
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--border-light)', textAlign: 'left', color: 'var(--text-muted)' }}>

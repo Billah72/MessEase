@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useMess } from '../../context/MessContext';
 import { 
@@ -16,11 +16,15 @@ import {
   Menu, 
   X, 
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle2,
   AlertCircle,
   Clock,
   Flame,
-  UserCheck
+  UserCheck,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 
 import { ManagerDashboard } from '../../pages/manager/ManagerDashboard';
@@ -49,6 +53,31 @@ export const ManagerLayout: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
   const [showNotifMenu, setShowNotifMenu] = useState<boolean>(false);
+
+  // Desktop collapsible sidebar with localStorage persistence
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    return localStorage.getItem('mess_manager_sidebar_collapsed') === 'true';
+  });
+
+  const toggleSidebarCollapse = () => {
+    setIsCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('mess_manager_sidebar_collapsed', String(next));
+      return next;
+    });
+  };
+
+  // Prevent background scroll when mobile drawer is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const pendingRequestsCount = mealRequests.filter(r => r.status === 'PENDING').length;
   const unreadNotifications = notifications.filter(n => !n.isRead);
@@ -94,159 +123,261 @@ export const ManagerLayout: React.FC = () => {
   };
 
   return (
-    <div className="app-container" style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-main)' }}>
+    <div className="app-shell">
       
       {/* Desktop Sidebar */}
-      <aside className="sidebar-desktop" style={{
-        width: '260px',
-        background: 'var(--bg-sidebar)',
-        color: '#f8fafc',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-        zIndex: 40,
-        borderRight: '1px solid rgba(255,255,255,0.08)'
-      }}>
-        {/* Brand */}
-        <div style={{ padding: '20px 18px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #10b981, #047857)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', boxShadow: '0 2px 8px rgba(16,185,129,0.4)' }}>
-            👑
-          </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontWeight: 800, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', letterSpacing: '-0.01em' }}>
-              {settings.messName}
+      <aside className={`sidebar-desktop ${isCollapsed ? 'collapsed' : ''}`}>
+        
+        {/* Brand Header */}
+        <div style={{
+          padding: isCollapsed ? '16px 12px' : '18px 16px',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: isCollapsed ? 'center' : 'space-between',
+          minHeight: '64px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #10b981, #047857)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.2rem',
+              flexShrink: 0,
+              boxShadow: '0 2px 8px rgba(16,185,129,0.35)'
+            }}>
+              👑
             </div>
-            <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, textTransform: 'uppercase' }}>
-              Manager Control Center
-            </div>
+            {!isCollapsed && (
+              <div style={{ overflow: 'hidden', minWidth: 0 }}>
+                <div style={{ fontWeight: 800, fontSize: '0.925rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', letterSpacing: '-0.01em', color: '#f8fafc' }}>
+                  {settings.messName}
+                </div>
+                <div style={{ fontSize: '0.68rem', color: '#34d399', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Manager Portal
+                </div>
+              </div>
+            )}
           </div>
+
+          {!isCollapsed && (
+            <button
+              onClick={toggleSidebarCollapse}
+              title="Collapse sidebar"
+              style={{
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: '#94a3b8',
+                cursor: 'pointer',
+                padding: '6px',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ChevronLeft size={16} />
+            </button>
+          )}
         </div>
 
-        {/* Navigation links */}
-        <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
+        {/* Navigation Links */}
+        <nav style={{ flex: 1, padding: '14px 10px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
           {navItems.map(item => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+
             return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: 'var(--radius-md)',
-                  background: isActive ? '#10b981' : 'transparent',
-                  color: isActive ? 'white' : '#cbd5e1',
-                  border: 'none',
-                  fontSize: '0.85rem',
-                  fontWeight: isActive ? 700 : 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Icon size={18} color={isActive ? 'white' : '#94a3b8'} />
-                  <span>{item.label}</span>
-                </div>
-                {item.badge && item.badge > 0 ? (
-                  <span style={{
-                    padding: '2px 7px',
-                    borderRadius: '10px',
-                    background: isActive ? 'white' : '#ef4444',
-                    color: isActive ? '#10b981' : 'white',
-                    fontSize: '0.7rem',
-                    fontWeight: 800
-                  }}>
-                    {item.badge}
+              <div key={item.id} className={isCollapsed ? 'tooltip-wrapper' : undefined}>
+                <button
+                  onClick={() => setActiveTab(item.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: isCollapsed ? 'center' : 'space-between',
+                    width: '100%',
+                    minHeight: '42px',
+                    padding: isCollapsed ? '8px' : '10px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    background: isActive ? '#10b981' : 'transparent',
+                    color: isActive ? 'white' : '#cbd5e1',
+                    border: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: isActive ? 700 : 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    position: 'relative'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Icon size={19} color={isActive ? 'white' : '#94a3b8'} style={{ flexShrink: 0 }} />
+                    {!isCollapsed && <span>{item.label}</span>}
+                  </div>
+
+                  {/* Badge */}
+                  {item.badge && item.badge > 0 ? (
+                    isCollapsed ? (
+                      <span style={{
+                        position: 'absolute',
+                        top: '4px',
+                        right: '4px',
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: '#ef4444'
+                      }} />
+                    ) : (
+                      <span style={{
+                        padding: '2px 7px',
+                        borderRadius: '10px',
+                        background: isActive ? 'white' : '#ef4444',
+                        color: isActive ? '#10b981' : 'white',
+                        fontSize: '0.7rem',
+                        fontWeight: 800
+                      }}>
+                        {item.badge}
+                      </span>
+                    )
+                  ) : null}
+                </button>
+
+                {/* Collapsed Tooltip */}
+                {isCollapsed && (
+                  <span className="sidebar-tooltip">
+                    {item.label}
+                    {item.badge && item.badge > 0 ? ` (${item.badge})` : ''}
                   </span>
-                ) : null}
-              </button>
+                )}
+              </div>
             );
           })}
         </nav>
 
-        {/* Manager User Pill */}
-        <div style={{ padding: '14px', borderTop: '1px solid rgba(255,255,255,0.08)', background: 'rgba(0,0,0,0.2)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Sidebar Footer / Profile & Expand Button */}
+        <div style={{
+          padding: isCollapsed ? '12px 8px' : '14px',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(0,0,0,0.25)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
+        }}>
+          {isCollapsed ? (
+            <button
+              onClick={toggleSidebarCollapse}
+              title="Expand sidebar"
+              style={{
+                width: '100%',
+                minHeight: '36px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: 'none',
+                color: '#34d399',
+                borderRadius: 'var(--radius-sm)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ChevronRight size={18} />
+            </button>
+          ) : null}
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: isCollapsed ? 'center' : 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
               <img 
                 src={currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'} 
                 alt="Manager" 
-                style={{ width: '34px', height: '34px', borderRadius: '50%', objectFit: 'cover' }}
+                style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '1.5px solid #10b981' }}
               />
-              <div style={{ overflow: 'hidden' }}>
-                <div style={{ fontWeight: 700, fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {currentUser?.name || 'Manager'}
+              {!isCollapsed && (
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.825rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'white' }}>
+                    {currentUser?.name || 'Manager'}
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Manager</div>
                 </div>
-                <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Manager</div>
-              </div>
+              )}
             </div>
 
-            <button
-              onClick={logout}
-              title="Log Out"
-              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
-            >
-              <LogOut size={16} />
-            </button>
+            {!isCollapsed && (
+              <button
+                onClick={logout}
+                title="Log Out"
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '6px', borderRadius: '6px' }}
+              >
+                <LogOut size={16} />
+              </button>
+            )}
           </div>
         </div>
+
       </aside>
 
-      {/* Main Wrapper */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      {/* Main Content Wrapper */}
+      <div className="main-wrapper">
         
         {/* Top Header */}
-        <header style={{
-          height: '64px',
-          background: 'var(--bg-card)',
-          borderBottom: '1px solid var(--border-light)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 20px',
-          position: 'sticky',
-          top: 0,
-          zIndex: 30
-        }}>
-          {/* Left: Mobile hamburger */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <header className="header-container">
+          
+          {/* Left: Mobile Drawer Trigger + App Name / Live Rate */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+            
+            {/* Mobile Hamburger Button (44px target) */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open Navigation Menu"
+              style={{
+                width: '42px',
+                height: '42px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'var(--slate-100)',
+                border: '1px solid var(--border-light)',
+                borderRadius: 'var(--radius-md)',
+                cursor: 'pointer',
+                color: 'var(--slate-800)',
+                padding: 0
+              }}
               className="mobile-only-btn"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)', padding: '6px' }}
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
 
-            <div className="mobile-only-btn" style={{ fontWeight: 800, fontSize: '1rem' }}>
-              {settings.messName}
+            {/* Brand Logo & Title on Mobile */}
+            <div className="mobile-only-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span style={{ fontSize: '1.1rem' }}>🍽️</span>
+              <span style={{ fontWeight: 800, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--slate-900)' }}>
+                {settings.messName}
+              </span>
             </div>
 
+            {/* Desktop Live Meal Rate Pill */}
             <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+              <span style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                 Live Meal Rate:
               </span>
               <span style={{
                 background: 'rgba(245,158,11,0.12)',
-                color: '#d97706',
+                border: '1px solid rgba(245,158,11,0.3)',
+                color: '#b45309',
                 padding: '3px 10px',
-                borderRadius: '12px',
+                borderRadius: 'var(--radius-full)',
                 fontWeight: 800,
-                fontSize: '0.85rem'
+                fontSize: '0.825rem'
               }}>
                 ৳{(overallStats.currentMealRate || 0).toFixed(2)}
               </span>
             </div>
           </div>
 
-          {/* Right: Notifications, Quick Switcher, Logout */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Right: Action Buttons, Notifications, User Menu */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             
             {/* Pending Requests Shortcut */}
             {pendingRequestsCount > 0 && (
@@ -259,7 +390,7 @@ export const ManagerLayout: React.FC = () => {
                   background: '#fef3c7',
                   border: '1px solid #fde047',
                   color: '#92400e',
-                  padding: '5px 12px',
+                  padding: '5px 10px',
                   borderRadius: '20px',
                   fontSize: '0.75rem',
                   fontWeight: 700,
@@ -267,7 +398,8 @@ export const ManagerLayout: React.FC = () => {
                 }}
               >
                 <Inbox size={14} />
-                <span>{pendingRequestsCount} New Requests</span>
+                <span className="desktop-only">{pendingRequestsCount} Pending</span>
+                <span className="mobile-only-btn">{pendingRequestsCount}</span>
               </button>
             )}
 
@@ -278,8 +410,9 @@ export const ManagerLayout: React.FC = () => {
                   setShowNotifMenu(!showNotifMenu);
                   setShowUserMenu(false);
                 }}
-                className="btn btn-secondary"
-                style={{ width: '38px', height: '38px', padding: 0, position: 'relative', borderRadius: '50%' }}
+                className="btn btn-secondary btn-icon-only"
+                style={{ position: 'relative' }}
+                aria-label="Notifications"
               >
                 <Bell size={18} />
                 {unreadNotifications.length > 0 && (
@@ -296,7 +429,8 @@ export const ManagerLayout: React.FC = () => {
                     fontWeight: 800,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    border: '2px solid white'
                   }}>
                     {unreadNotifications.length}
                   </span>
@@ -305,10 +439,10 @@ export const ManagerLayout: React.FC = () => {
 
               {showNotifMenu && (
                 <div style={{
-                  position: 'absolute',
-                  top: '46px',
-                  right: 0,
-                  width: '320px',
+                  position: 'fixed',
+                  top: '68px',
+                  right: '12px',
+                  width: 'min(330px, calc(100vw - 24px))',
                   background: 'var(--bg-card)',
                   borderRadius: 'var(--radius-lg)',
                   boxShadow: 'var(--shadow-xl)',
@@ -316,22 +450,22 @@ export const ManagerLayout: React.FC = () => {
                   zIndex: 100,
                   overflow: 'hidden'
                 }}>
-                  <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-main)' }}>
+                  <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--slate-50)' }}>
                     <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Notifications</span>
                     {unreadNotifications.length > 0 && (
-                      <button onClick={markAllNotificationsAsRead} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
+                      <button onClick={markAllNotificationsAsRead} style={{ background: 'none', border: 'none', color: 'var(--primary-600)', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
                         Mark all read
                       </button>
                     )}
                   </div>
                   <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
                     {notifications.length === 0 ? (
-                      <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>No notifications</div>
+                      <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>No notifications</div>
                     ) : (
                       notifications.slice(0, 6).map(n => (
-                        <div key={n.id} onClick={() => markNotificationAsRead(n.id)} style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-light)', cursor: 'pointer', background: n.isRead ? 'transparent' : 'rgba(16,185,129,0.06)' }}>
-                          <div style={{ fontWeight: n.isRead ? 600 : 700, fontSize: '0.8rem' }}>{n.title}</div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>{n.message}</div>
+                        <div key={n.id} onClick={() => markNotificationAsRead(n.id)} style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)', cursor: 'pointer', background: n.isRead ? 'transparent' : 'rgba(16,185,129,0.06)' }}>
+                          <div style={{ fontWeight: n.isRead ? 600 : 700, fontSize: '0.8rem', color: 'var(--slate-900)' }}>{n.title}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px', lineHeight: 1.3 }}>{n.message}</div>
                         </div>
                       ))
                     )}
@@ -340,7 +474,7 @@ export const ManagerLayout: React.FC = () => {
               )}
             </div>
 
-            {/* Demo Switcher */}
+            {/* Demo User Switcher */}
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => {
@@ -350,31 +484,32 @@ export const ManagerLayout: React.FC = () => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  padding: '4px 10px 4px 4px',
+                  gap: '6px',
+                  padding: '3px 8px 3px 3px',
                   background: 'var(--bg-main)',
                   border: '1px solid var(--border-light)',
-                  borderRadius: '20px',
-                  cursor: 'pointer'
+                  borderRadius: 'var(--radius-full)',
+                  cursor: 'pointer',
+                  minHeight: '38px'
                 }}
               >
                 <img 
                   src={currentUser?.avatarUrl} 
                   alt={currentUser?.name} 
-                  style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
+                  style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }}
                 />
-                <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>
+                <span className="desktop-only" style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--slate-900)' }}>
                   {currentUser?.name?.split(' ')[0]}
                 </span>
-                <ChevronDown size={14} color="var(--text-muted)" />
+                <ChevronDown size={14} color="var(--slate-500)" />
               </button>
 
               {showUserMenu && (
                 <div style={{
-                  position: 'absolute',
-                  top: '46px',
-                  right: 0,
-                  width: '260px',
+                  position: 'fixed',
+                  top: '68px',
+                  right: '12px',
+                  width: 'min(280px, calc(100vw - 24px))',
                   background: 'var(--bg-card)',
                   borderRadius: 'var(--radius-lg)',
                   boxShadow: 'var(--shadow-xl)',
@@ -403,17 +538,17 @@ export const ManagerLayout: React.FC = () => {
                           padding: '8px',
                           border: 'none',
                           borderRadius: 'var(--radius-md)',
-                          background: u.id === currentUser?.id ? 'var(--primary-light)' : 'transparent',
+                          background: u.id === currentUser?.id ? 'var(--primary-50)' : 'transparent',
                           cursor: 'pointer',
                           textAlign: 'left'
                         }}
                       >
-                        <img src={u.avatarUrl} alt={u.name} style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }} />
+                        <img src={u.avatarUrl} alt={u.name} style={{ width: '26px', height: '26px', borderRadius: '50%', objectFit: 'cover' }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: '0.78rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.name}</div>
                           <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{u.role}</div>
                         </div>
-                        {u.id === currentUser?.id && <UserCheck size={14} color="var(--primary)" />}
+                        {u.id === currentUser?.id && <UserCheck size={14} color="var(--primary-600)" />}
                       </button>
                     ))}
                   </div>
@@ -450,73 +585,111 @@ export const ManagerLayout: React.FC = () => {
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
           <div 
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(15, 23, 42, 0.7)',
-              backdropFilter: 'blur(4px)',
-              zIndex: 999,
-              display: 'flex'
-            }}
+            className="mobile-drawer-overlay"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <div 
-              style={{
-                width: '280px',
-                height: '100%',
-                background: 'var(--bg-sidebar)',
-                color: 'white',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '20px 14px'
-              }}
+              className="mobile-drawer-panel"
               onClick={(e) => e.stopPropagation()}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <div style={{ fontWeight: 800, fontSize: '1rem', color: '#10b981' }}>Manager Menu</div>
-                <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
-                  <X size={20} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '1.2rem' }}>👑</span>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#f8fafc' }}>{settings.messName}</div>
+                    <div style={{ fontSize: '0.68rem', color: '#34d399', fontWeight: 700 }}>MANAGER MENU</div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: '#94a3b8',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  aria-label="Close menu"
+                >
+                  <X size={18} />
                 </button>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto' }}>
-                {navItems.map(item => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setActiveTab(item.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    style={{
-                      padding: '10px 14px',
-                      borderRadius: 'var(--radius-md)',
-                      background: activeTab === item.id ? '#10b981' : 'transparent',
-                      color: activeTab === item.id ? 'white' : '#cbd5e1',
-                      border: 'none',
-                      textAlign: 'left',
-                      fontWeight: 600,
-                      fontSize: '0.875rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <span>{item.label}</span>
-                    {item.badge && item.badge > 0 ? (
-                      <span style={{ background: '#ef4444', color: 'white', padding: '1px 6px', borderRadius: '10px', fontSize: '0.7rem' }}>
-                        {item.badge}
-                      </span>
-                    ) : null}
-                  </button>
-                ))}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', flex: 1 }}>
+                {navItems.map(item => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      style={{
+                        padding: '12px 14px',
+                        borderRadius: 'var(--radius-md)',
+                        background: isActive ? '#10b981' : 'transparent',
+                        color: isActive ? 'white' : '#cbd5e1',
+                        border: 'none',
+                        textAlign: 'left',
+                        fontWeight: 600,
+                        fontSize: '0.875rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        minHeight: '44px'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Icon size={18} color={isActive ? 'white' : '#94a3b8'} />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge && item.badge > 0 ? (
+                        <span style={{ background: '#ef4444', color: 'white', padding: '2px 7px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: 800 }}>
+                          {item.badge}
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '14px', marginTop: '10px' }}>
+                <button
+                  onClick={logout}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: 'var(--radius-md)',
+                    border: 'none',
+                    background: '#fee2e2',
+                    color: '#b91c1c',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    minHeight: '44px'
+                  }}
+                >
+                  <LogOut size={16} /> Log Out
+                </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Main Content Area */}
-        <main style={{ flex: 1, padding: '24px 20px', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+        {/* Page Content Container */}
+        <main className="page-content-wrapper">
           {renderActivePage()}
         </main>
 

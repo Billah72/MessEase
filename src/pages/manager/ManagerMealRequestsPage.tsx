@@ -63,7 +63,7 @@ export const ManagerMealRequestsPage: React.FC = () => {
   };
 
   return (
-    <div className="page-content">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Toast Notification */}
       {successToast && (
         <div style={{

@@ -39,7 +39,7 @@ export const ManagerAnnouncementsPage: React.FC = () => {
   };
 
   return (
-    <div className="page-content">
+    <div className="page-content-wrapper">
       {/* Page Header */}
       <div className="page-header">
         <div>

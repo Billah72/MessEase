@@ -41,7 +41,7 @@ export const ManagerResponsibilitiesPage: React.FC = () => {
   };
 
   return (
-    <div className="page-content">
+    <div className="page-content-wrapper">
       {/* Page Header */}
       <div className="page-header">
         <div>
@@ -64,7 +64,7 @@ export const ManagerResponsibilitiesPage: React.FC = () => {
 
       {/* Roster Table */}
       <div className="card">
-        <div className="table-responsive">
+        <div className="table-responsive-wrapper">
           <table className="custom-table">
             <thead>
               <tr>
@@ -146,7 +146,7 @@ export const ManagerResponsibilitiesPage: React.FC = () => {
               <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Hold Ctrl/Cmd to select multiple</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="grid-responsive-2" style={{ gap: '12px' }}>
               <div className="form-group">
                 <label className="form-label">Cooking Lead</label>
                 <select

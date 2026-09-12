@@ -81,7 +81,7 @@ export const ManagerReportsPage: React.FC = () => {
   };
 
   return (
-    <div className="page-content">
+    <div className="page-content-wrapper">
       {/* Page Header */}
       <div className="page-header">
         <div>
@@ -94,7 +94,7 @@ export const ManagerReportsPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button onClick={handleExportPDF} className="btn btn-primary btn-sm">
             <Download size={15} /> Download PDF Statement
           </button>
@@ -105,7 +105,7 @@ export const ManagerReportsPage: React.FC = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid-4" style={{ marginBottom: '24px' }}>
+      <div className="grid-responsive-4" style={{ marginBottom: '24px' }}>
         <StatCard
           label="Total Food Shopping"
           value={formatBDT(overallStats.totalBazarCost)}
@@ -148,7 +148,7 @@ export const ManagerReportsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="table-responsive">
+        <div className="table-responsive-wrapper">
           <table className="custom-table" style={{ fontSize: '0.825rem' }}>
             <thead>
               <tr>

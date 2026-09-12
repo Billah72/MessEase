@@ -37,7 +37,7 @@ export const ManagerSettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="page-content">
+    <div className="page-content-wrapper">
       {saveToast && (
         <div style={{
           position: 'fixed',
@@ -74,7 +74,7 @@ export const ManagerSettingsPage: React.FC = () => {
       </div>
 
       <form onSubmit={handleSave}>
-        <div className="grid-2" style={{ marginBottom: '24px' }}>
+        <div className="grid-responsive-2" style={{ marginBottom: '24px' }}>
           {/* General Details */}
           <div className="card">
             <div className="card-header">
@@ -136,7 +136,7 @@ export const ManagerSettingsPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+            <div className="grid-responsive-3" style={{ gap: '10px', marginBottom: '14px' }}>
               <div className="form-group">
                 <label className="form-label">Breakfast Ratio</label>
                 <input 
@@ -221,7 +221,7 @@ export const ManagerSettingsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid-2" style={{ gap: '20px' }}>
+        <div className="grid-responsive-2" style={{ gap: '20px' }}>
           <div>
             <h4 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '4px' }}>
               Export Mess Database

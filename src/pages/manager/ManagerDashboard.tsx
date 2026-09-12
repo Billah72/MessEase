@@ -42,7 +42,7 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({ onNavigate }
   const todayDuty = responsibilities.find(r => r.date === '2026-09-12');
 
   return (
-    <div className="page-content">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Pending Meal Requests Prominent Alert Banner */}
       {pendingRequests.length > 0 && (
         <div style={{
@@ -156,7 +156,7 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({ onNavigate }
       </div>
 
       {/* Main Mess Stat Cards Grid */}
-      <div className="grid-4" style={{ marginBottom: '24px' }}>
+      <div className="grid-responsive-4">
         <StatCard
           label="Total Mess Treasury Balance"
           value={formatBDT(overallStats.currentMessBalance)}
@@ -230,7 +230,7 @@ export const ManagerDashboard: React.FC<ManagerDashboardProps> = ({ onNavigate }
       </div>
 
       {/* Split Rows: Recent Activity & Duty / Transactions */}
-      <div className="grid-2" style={{ marginBottom: '24px' }}>
+      <div className="grid-responsive-2">
         {/* Recent Financial Transactions */}
         <div className="card">
           <div className="card-header">

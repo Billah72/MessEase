@@ -25,7 +25,7 @@ export const MemberBalancePage: React.FC = () => {
   const isPositive = balance >= 0;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
+    <div className="page-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
       
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
@@ -40,7 +40,7 @@ export const MemberBalancePage: React.FC = () => {
       </div>
 
       {/* Main Financial Balance Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+      <div className="grid-responsive-4" style={{ gap: '16px' }}>
         
         {/* Net Balance Card */}
         <div className="card" style={{
@@ -135,7 +135,7 @@ export const MemberBalancePage: React.FC = () => {
             No deposit transactions found. Contact Manager to credit your initial deposit.
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-responsive-wrapper">
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--border-light)', textAlign: 'left', color: 'var(--text-muted)' }}>

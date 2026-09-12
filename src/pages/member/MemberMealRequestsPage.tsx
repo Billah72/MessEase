@@ -56,7 +56,7 @@ export const MemberMealRequestsPage: React.FC = () => {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
+    <div className="page-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
       
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
@@ -105,7 +105,7 @@ export const MemberMealRequestsPage: React.FC = () => {
       </div>
 
       {/* Main Content Grid: Request Form + History Table */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
+      <div className="grid-responsive-2" style={{ gap: '24px' }}>
         
         {/* Submit Form Card */}
         <div className="card" style={{ padding: '24px' }}>

@@ -91,7 +91,7 @@ export const ManagerMealsPage: React.FC = () => {
   const currentMenus = mealInfos.filter(m => m.date === selectedDate);
 
   return (
-    <div className="page-content">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {saveSuccessMsg && (
         <div style={{
           position: 'fixed',
@@ -146,9 +146,9 @@ export const ManagerMealsPage: React.FC = () => {
       {viewMode === 'DAILY' ? (
         <>
           {/* Date Selector & Day Totals Bar */}
-          <div className="card" style={{ marginBottom: '20px' }}>
+          <div className="card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <input 
                   type="date"
                   value={selectedDate}
@@ -194,7 +194,7 @@ export const ManagerMealsPage: React.FC = () => {
 
           {/* Menus of the Day Display */}
           {currentMenus.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', marginBottom: '20px' }}>
+            <div className="grid-responsive-3">
               {currentMenus.map(menu => (
                 <div key={menu.mealType} className="card" style={{ padding: '14px', background: 'var(--slate-50)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
@@ -209,8 +209,8 @@ export const ManagerMealsPage: React.FC = () => {
           )}
 
           {/* Daily Table for Members */}
-          <div className="table-responsive" style={{ marginBottom: '24px' }}>
-            <table className="custom-table">
+          <div className="table-responsive-wrapper">
+            <table>
               <thead>
                 <tr>
                   <th>Member Name</th>
@@ -233,7 +233,7 @@ export const ManagerMealsPage: React.FC = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <img 
                             src={member.avatarUrl} 
-                            alt={member.name}
+                            alt={member.name} 
                             style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }}
                           />
                           <div>
@@ -253,7 +253,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'breakfast', -0.5)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Minus size={13} />
                           </button>
@@ -263,7 +263,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'breakfast', 0.5)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Plus size={13} />
                           </button>
@@ -276,7 +276,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'lunch', -1)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Minus size={13} />
                           </button>
@@ -286,7 +286,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'lunch', 1)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Plus size={13} />
                           </button>
@@ -299,7 +299,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'dinner', -1)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Minus size={13} />
                           </button>
@@ -309,7 +309,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'dinner', 1)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Plus size={13} />
                           </button>
@@ -322,7 +322,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'guestMeals', -1)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Minus size={13} />
                           </button>
@@ -332,7 +332,7 @@ export const ManagerMealsPage: React.FC = () => {
                           <button
                             onClick={() => handleMealChange(member.id, 'guestMeals', 1)}
                             className="btn btn-secondary btn-icon-only"
-                            style={{ width: '28px', height: '28px', padding: 0 }}
+                            style={{ width: '32px', height: '32px', minHeight: '32px', padding: 0 }}
                           >
                             <Plus size={13} />
                           </button>
@@ -359,8 +359,8 @@ export const ManagerMealsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="table-responsive" style={{ maxHeight: '550px' }}>
-            <table className="custom-table" style={{ fontSize: '0.78rem' }}>
+          <div className="table-responsive-wrapper" style={{ maxHeight: '550px' }}>
+            <table style={{ fontSize: '0.78rem' }}>
               <thead>
                 <tr>
                   <th style={{ position: 'sticky', left: 0, background: 'var(--slate-100)', zIndex: 10 }}>Member Name</th>
