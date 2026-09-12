@@ -42,7 +42,10 @@ export const ManagerRegisterPage: React.FC<ManagerRegisterPageProps> = ({ onBack
         boxShadow: 'var(--shadow-xl)'
       }}>
         <button
-          onClick={onBackToLanding}
+          onClick={() => {
+            window.history.pushState({}, '', '/');
+            onGoToLogin();
+          }}
           style={{
             background: 'none',
             border: 'none',
@@ -56,7 +59,7 @@ export const ManagerRegisterPage: React.FC<ManagerRegisterPageProps> = ({ onBack
             marginBottom: '16px'
           }}
         >
-          <ArrowLeft size={16} /> Back to Portal Selection
+          <ArrowLeft size={16} /> Back to Login
         </button>
 
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>

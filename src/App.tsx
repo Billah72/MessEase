@@ -3,20 +3,43 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { MessProvider } from './context/MessContext';
 
 // Auth Pages
-import { LandingPage } from './pages/auth/LandingPage';
-import { ManagerLoginPage } from './pages/auth/ManagerLoginPage';
+import { LoginPage } from './pages/auth/LoginPage';
 import { ManagerRegisterPage } from './pages/auth/ManagerRegisterPage';
-import { MemberLoginPage } from './pages/auth/MemberLoginPage';
 
 // Layouts
 import { ManagerLayout } from './components/layout/ManagerLayout';
 import { MemberLayout } from './components/layout/MemberLayout';
 
-type AuthView = 'LANDING' | 'MANAGER_LOGIN' | 'MANAGER_REGISTER' | 'MEMBER_LOGIN';
+const checkIsRegisterRoute = () => {
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+  const search = window.location.search.toLowerCase();
+  return (
+    path.includes('manager-registration') ||
+    path.includes('manager/register') ||
+    hash.includes('manager-registration') ||
+    hash.includes('manager/register') ||
+    search.includes('manager-registration') ||
+    search.includes('manager/register')
+  );
+};
 
 const AppContent: React.FC = () => {
   const { currentUser, isAuthenticated, isManager, isMember } = useAuth();
-  const [authView, setAuthView] = useState<AuthView>('LANDING');
+  const [isRegisterRoute, setIsRegisterRoute] = useState<boolean>(checkIsRegisterRoute());
+
+  React.useEffect(() => {
+    const handleLocationChange = () => {
+      setIsRegisterRoute(checkIsRegisterRoute());
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
 
   // If user is authenticated, render the respective layout based strictly on role
   if (isAuthenticated && currentUser) {
@@ -28,36 +51,24 @@ const AppContent: React.FC = () => {
     }
   }
 
-  // Otherwise, render the appropriate auth flow screen
-  switch (authView) {
-    case 'MANAGER_LOGIN':
-      return (
-        <ManagerLoginPage 
-          onBackToLanding={() => setAuthView('LANDING')}
-          onGoToRegister={() => setAuthView('MANAGER_REGISTER')}
-        />
-      );
-    case 'MANAGER_REGISTER':
-      return (
-        <ManagerRegisterPage 
-          onBackToLanding={() => setAuthView('LANDING')}
-          onGoToLogin={() => setAuthView('MANAGER_LOGIN')}
-        />
-      );
-    case 'MEMBER_LOGIN':
-      return (
-        <MemberLoginPage 
-          onBackToLanding={() => setAuthView('LANDING')}
-        />
-      );
-    case 'LANDING':
-    default:
-      return (
-        <LandingPage 
-          onNavigateAuth={(view) => setAuthView(view)}
-        />
-      );
+  // If accessed via secret Manager Registration URL:
+  if (isRegisterRoute) {
+    return (
+      <ManagerRegisterPage
+        onBackToLanding={() => {
+          window.history.pushState({}, '', '/');
+          setIsRegisterRoute(false);
+        }}
+        onGoToLogin={() => {
+          window.history.pushState({}, '', '/');
+          setIsRegisterRoute(false);
+        }}
+      />
+    );
   }
+
+  // Otherwise, default directly to clean & simple LoginPage (zero registration links)
+  return <LoginPage />;
 };
 
 export const App: React.FC = () => {

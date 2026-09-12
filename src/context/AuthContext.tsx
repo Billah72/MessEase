@@ -21,7 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<User[]>(() => StorageService.getUsers());
-  const [currentUserId, setCurrentUserId] = useState<string | null>(() => StorageService.getActiveUserId() || 'user-manager');
+  const [currentUserId, setCurrentUserId] = useState<string | null>(() => StorageService.getActiveUserId());
 
   const currentUser = users.find(u => u.id === currentUserId) || null;
 
